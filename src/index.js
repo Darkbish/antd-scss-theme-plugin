@@ -1,8 +1,9 @@
 class AntdScssThemePlugin {
-  SCSS_THEME_PATH;
+  SCSS_THEME_PATH
 
-  constructor(scssThemePath) {
-    AntdScssThemePlugin.SCSS_THEME_PATH = scssThemePath;
+  constructor(scssThemePath, antdThemePath) {
+    AntdScssThemePlugin.SCSS_THEME_PATH = scssThemePath
+    AntdScssThemePlugin.ANTD_THEME_PATH = antdThemePath
   }
 
   /**
@@ -13,31 +14,25 @@ class AntdScssThemePlugin {
   apply(compiler) {
     const afterEmit = (compilation, callback) => {
       // Watch the theme file for changes.
-      const theme = AntdScssThemePlugin.SCSS_THEME_PATH;
+      const theme = AntdScssThemePlugin.SCSS_THEME_PATH
       if (theme) {
-        if (
-          Array.isArray(compilation.fileDependencies)
-          && !compilation.fileDependencies.includes(theme)
-        ) {
-          compilation.fileDependencies.push(theme);
-        } else if (
-          compilation.fileDependencies instanceof Set
-          && !compilation.fileDependencies.has(theme)
-        ) {
-          compilation.fileDependencies.add(theme);
+        if (Array.isArray(compilation.fileDependencies) && !compilation.fileDependencies.includes(theme)) {
+          compilation.fileDependencies.push(theme)
+        } else if (compilation.fileDependencies instanceof Set && !compilation.fileDependencies.has(theme)) {
+          compilation.fileDependencies.add(theme)
         }
       }
-      callback();
-    };
+      callback()
+    }
 
     // Register the callback for...
     if (compiler.hooks) {
       // ... webpack 4, or...
-      const plugin = { name: 'AntdScssThemePlugin' };
-      compiler.hooks.afterEmit.tapAsync(plugin, afterEmit);
+      const plugin = { name: 'AntdScssThemePlugin' }
+      compiler.hooks.afterEmit.tapAsync(plugin, afterEmit)
     } else {
       // ... webpack 3.
-      compiler.plugin('after-emit', afterEmit);
+      compiler.plugin('after-emit', afterEmit)
     }
   }
 
@@ -51,26 +46,25 @@ class AntdScssThemePlugin {
    * @return {Object} Loader config using the wrapped loader instead of the original.
    */
   static themify(config) {
-    const { loader, options = {} } = (typeof config === 'string') ? { loader: config } : config;
-    let overloadedLoader;
+    const { loader, options = {} } = typeof config === 'string' ? { loader: config } : config
+    let overloadedLoader
     switch (loader) {
       case 'sass-loader':
-        overloadedLoader = require.resolve('./antdSassLoader.js');
-        break;
+        overloadedLoader = require.resolve('./antdSassLoader.js')
+        break
       case 'less-loader':
-        overloadedLoader = require.resolve('./antdLessLoader.js');
-        break;
+        overloadedLoader = require.resolve('./antdLessLoader.js')
+        break
       default:
-        overloadedLoader = loader;
-        break;
+        overloadedLoader = loader
+        break
     }
 
     return {
       loader: overloadedLoader,
       options,
-    };
+    }
   }
 }
 
-
-export default AntdScssThemePlugin;
+export default AntdScssThemePlugin
